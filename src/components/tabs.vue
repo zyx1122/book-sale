@@ -32,7 +32,7 @@
   export default {}
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   @import './tabs.less';
   .slide-fade-enter-active {
     transition: all .3s ease;

@@ -10,6 +10,6 @@
   }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   @import './assets/less/site.less';
 </style>
