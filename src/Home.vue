@@ -41,10 +41,10 @@
     data () {
       return {
         page_data: undefined,
-        announcement: {},
-        slides: [],
-        latestUpdated: [],
-        recommended: [],
+//        announcement: {},
+//        slides: [],
+//        latestUpdated: [],
+//        recommended: [],
         selected: {}
       }
     },

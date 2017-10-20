@@ -1,13 +1,16 @@
 <template>
   <div>
     <!--页头-->
-    <div class='uk-block uk-block-primary uk-contrast'>
-      <div class='uk-container-center'>
-        <h1 class='uk-heading-large'>图书
-          <small>Vue CRUD 示例</small>
-        </h1>
-      </div>
-    </div>
+    <page-header header="图书" sub-header="Vue CRUD 示例"></page-header>
+
+    <!--<div class='uk-block uk-block-primary uk-contrast'>-->
+      <!--<div class='uk-container-center'>-->
+        <!--<h1 class='uk-heading-large'>图书-->
+          <!--<small>Vue CRUD 示例</small>-->
+        <!--</h1>-->
+      <!--</div>-->
+    <!--</div>-->
+
     <!--页头-->
     <!--CRUD-->
     <div class='content'>
@@ -20,16 +23,22 @@
               <span class='uk-text-large uk-text-muted'>共有
                 <span class='uk-text-bold'>{{books.length}}</span>本图书
               </span>
+              <span v-if="hasSelection">&nbsp;已选中
+                <span class="uk-text-bold">{{selection.length}}</span>本图书
+              </span>
             </div>
             <!--图书统计-->
             <!--搜索框-->
             <div class='uk-width-2-3'>
-              <div class='uk-form'>
-                <div class='uk-form-icon'>
-                  <i class='uk-icon-search'></i>
-                  <input type='search' v-model="terms" placeholder='输入要筛选的书名' class='search-box uk-from-width-large'>
-                </div>
-              </div>
+              <search-box :terms="terms" placeholder='输入要筛选的书名' @search="terms=$event"></search-box>
+
+              <!--<div class='uk-form'>-->
+                <!--<div class='uk-form-icon'>-->
+                  <!--<i class='uk-icon-search'></i>-->
+                  <!--<input type='search' v-model="terms" placeholder='输入要筛选的书名' class='search-box uk-from-width-large'>-->
+                <!--</div>-->
+              <!--</div>-->
+
             </div>
             <!--搜索框-->
           </div>
@@ -37,7 +46,7 @@
         <!--按钮组-->
         <div class='uk-width-1-4'>
           <div class='uk-float-right'>
-            <button title='删除已选中的图书' class='uk-button uk-button-danger'>
+            <button title='删除已选中的图书' class='uk-button uk-button-danger' v-if="hasSelection">
               <i class='uk-icon-trash'></i>
             </button>
             <button class='uk-button uk-button-primary'>
@@ -56,16 +65,24 @@
     <table class='uk-table uk-table-striped' v-if="bookFilter.length">
       <thead>
       <tr>
-        <th class='uk-text-center disable-select'>书名</th>
+        <th class='uk-text-center disable-select'
+            :class="{'sorting':sorted('name')}"
+            data-col="name"
+            @click="sortBy('name')">
+          <div>书名
+            <span :class="{'uk-icon-sort-asc':direction=='asc','uk-icon-sort-desc':direction=='desc'}" v-if="sortingKey=='name'"></span>
+          </div>
+        </th>
         <th class='uk-text-center disable-select uk-width-1-6'>类别</th>
         <th class='uk-text-center disable-select uk-width-1-6'>书名</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for='book in bookFilter'>
+      <tr v-for='book in bookFilter' :class="{'book-selected':book.selected}">
         <td class='book-name uk-form uk-grid'>
           <div class='uk-width-1-10'>
-            <input type='checkbox' class='uk-margin-right'>
+            <input type='checkbox' class='uk-margin-right' v-model="book.selected" :data-isbn="book.isbn"
+                   @change="selectChanged(book,$event)">
           </div>
           <div class='uk-width-9-10'>
             <a href='javascript:;' :title='book.name' class='uk-h3'>{{book.name}}</a>
@@ -91,17 +108,47 @@
 
 <script>
   import BookData from './fixtures/items.json'
+  import _ from 'lodash'
+  import PageHeader from './components/PageHeader.vue'
+  import SearchBox from './components/SearchBox.vue'
 
   export default {
     data() {
       return {
         books: BookData,
-        terms: ''
+        terms: '',
+        selection: [],
+        sortingKey: '',
+        direction: 'asc'
       }
     },
+    components: {PageHeader, SearchBox},
     computed: {
       bookFilter() {
         return this.terms.length ? this.books.filter(x => x.name.indexOf(this.terms) > -1) : this.books
+      },
+      hasSelection() {
+        return this.selection.length > 0
+      }
+    },
+    methods: {
+      selectChanged(book, e) {
+        if (e.target.checked) {
+          this.selection.push(book.isbn)
+          this.selection = _.uniq(this.selection)
+        } else {
+          this.selection = _.reject(this.selection, b => book.isbn === b)
+        }
+      },
+      sortBy (key) {
+        if (key === this.sortingKey) {
+          this.direction = this.direction === 'asc' ? 'desc' : 'asc'
+        }
+        this.sortingKey = key
+        this.books = _.orderBy(this.books, key, this.direction)
+      },
+      sorted (key) {
+        return key === this.sortingKey
       }
     }
   }
