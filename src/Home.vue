@@ -15,10 +15,7 @@
     <div class="section">
       <book-list :books="page_data.promotions" heading="编辑推荐" @onBookSelect="preview($event)"></book-list>
     </div>
-    <modal-dialog ref="dialog" @dialogClose="selected={}">
-      <div slot="header">
-        <div class="dismiss" @click.prevent="$refs.dialog.close()"></div>
-      </div>
+    <modal-dialog ref="dialog" @dialogClose="selected={}" headerText="书籍详情">
       <div>
         <img :src="selected.img_url">
       </div>

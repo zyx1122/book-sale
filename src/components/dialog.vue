@@ -1,12 +1,10 @@
 <template>
-  <div class="dialog-wrapper" :class="{'open':is_open}">
-    <div class="overlay" @click="close"></div>
-    <div class="dialog">
-      <!--头部及标题-->
-      <div class="heading">
-        <slot name="header"></slot>
+  <div class="uk-modal" ref="modal">
+    <div class="uk-modal-dialog">
+      <div class="uk-modal-header">
+        <a class="uk-modal-close uk-close uk-float-right"></a>
+        <h2 class="uk-display-inline">{{headerText}}</h2>
       </div>
-      <!--内容区域-->
       <slot></slot>
     </div>
   </div>
@@ -14,28 +12,27 @@
 
 <script>
   export default {
-    data () {
+    data() {
       return {
-        is_open: false
+        dialog: undefined
       }
     },
+    props: [
+      'headerText'
+    ],
+    mounted() {
+      this.dialog = this.$ui.modal(this.$refs.modal)
+      var self = this
+      this.dialog.on('show.uk.modal', () => self.$emit('dialogOpen'))
+      this.dialog.on('hide.uk.modal', () => self.$emit('dialogClose'))
+    },
     methods: {
-      open () {
-        if (!this.is_open) {
-          this.$emit('dialogOpen')
-        }
-        this.is_open = true
+      open() {
+        this.dialog.show()
       },
-      close () {
-        if (this.is_open) {
-          this.$emit('dialogClose')
-        }
-        this.is_open = false
+      close() {
+        this.dialog.hide()
       }
     }
   }
 </script>
-
-<style lang="less">
-  @import './dialog.less';
-</style>

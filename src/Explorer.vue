@@ -13,10 +13,10 @@
       </div>
       <!--按钮组-->
       <div slot="buttons">
-        <button title='删除已选中的图书' class='uk-button uk-button-danger' v-if="hasSelection">
+        <button title='删除已选中的图书' class='uk-button uk-button-danger' v-if="hasSelection" @click="removeBooks">
           <i class='uk-icon-trash'></i>
         </button>
-        <button class='uk-button uk-button-primary'>
+        <button class='uk-button uk-button-primary' @click="newBook">
           <i class='uk-icon-plus'></i>
           <span>添加</span>
         </button>
@@ -30,7 +30,8 @@
               data-col="name"
               @click="sortBy('name')">
             <div>书名
-              <span :class="{'uk-icon-sort-asc':direction=='asc','uk-icon-sort-desc':direction=='desc'}" v-if="sortingKey=='name'"></span>
+              <span :class="{'uk-icon-sort-asc':direction=='asc','uk-icon-sort-desc':direction=='desc'}"
+                    v-if="sortingKey=='name'"></span>
             </div>
           </th>
           <th class='uk-text-center disable-select uk-width-1-6'>类别</th>
@@ -61,6 +62,21 @@
 
       <!--对话框-->
       <!--图书编辑/新建 数据表单-->
+      <modal ref="modal"
+             :headerText="statusText"
+             @dialogClose="current=undefined">
+        <book-edit-form :book="current"
+        ref="form" v-if="current">
+        </book-edit-form>
+
+        <!--<div slot="footer"-->
+        <!--class="uk-modal-footer uk-text-right">-->
+        <!--<uk-button color="primary"-->
+        <!--@click="save">保存</uk-button>-->
+        <!--<uk-button color="danger"-->
+        <!--@click="$refs.modal.close()">关闭</uk-button>-->
+        <!--</div>-->
+      </modal>
       <!--对话框-->
     </mother-board>
   </div>
@@ -72,6 +88,8 @@
   import SearchBox from './components/SearchBox.vue'
   import CountingStatus from './components/CountingStatus.vue'
   import MotherBoard from './components/MotherBoard.vue'
+  import BookEditForm from './components/BookForm.vue'
+  import Modal from './components/dialog.vue'
 
   export default {
     data() {
@@ -80,10 +98,12 @@
         terms: '',
         selection: [],
         sortingKey: '',
-        direction: 'asc'
+        direction: 'asc',
+        current: undefined,
+        statusText: ''
       }
     },
-    components: {SearchBox, MotherBoard, CountingStatus},
+    components: {SearchBox, MotherBoard, CountingStatus, BookEditForm, Modal},
     computed: {
       bookFilter() {
         return this.terms.length ? this.books.filter(x => x.name.indexOf(this.terms) > -1) : this.books
@@ -101,15 +121,30 @@
           this.selection = _.reject(this.selection, b => book.isbn === b)
         }
       },
-      sortBy (key) {
+      sortBy(key) {
         if (key === this.sortingKey) {
           this.direction = this.direction === 'asc' ? 'desc' : 'asc'
         }
         this.sortingKey = key
         this.books = _.orderBy(this.books, key, this.direction)
       },
-      sorted (key) {
+      sorted(key) {
         return key === this.sortingKey
+      },
+      newBook() {
+        this.current = {}
+        this.statusText = '添加新的图书'
+        this.$refs.modal.open()
+      },
+      removeBooks() {
+        // this.books = this.books.filter(x =>x != book)
+        this.$ui.confirm('真的要删除所选中的图书吗?', () => {
+          this.$http.delete('/api/books', {body: this.selection})
+            .then((res) => {
+              this.selection = []
+              this.refreshBooks()
+            })
+        })
       }
     }
   }

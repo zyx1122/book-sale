@@ -85,9 +85,10 @@ module.exports = {
   plugins: [
     // 3. 配置全局使用 jquery
     new webpack.ProvidePlugin({
+      codemirror: "codemirror",
       $: "jquery",
       jQuery: "jquery",
-      jquery: "jquery",
+      "window.$": "jquery",
       "window.jQuery": "jquery"
     })
   ]
