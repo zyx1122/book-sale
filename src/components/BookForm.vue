@@ -2,16 +2,8 @@
   <div>
     <form class="uk-form uk-form-horizontal">
       <div class="uk-container uk-container-center">
-        <ul class="uk-tab" data-uk-tab="{active:0,connect:'#tabContents'}">
-          <li>
-            <a href="">通用</a>
-          </li>
-          <li>
-            <a href="">摘要</a>
-          </li>
-        </ul>
-        <ul id="tabContents">
-          <li>
+        <tabs :index="1">
+          <tab label="通用">
             <div class="uk-form-row">
               <label for="name" class="uk-form-label">书名</label>
               <div class="uk-form-controls">
@@ -39,7 +31,8 @@
             <div class="uk-form-row">
               <label for="published" class="uk-form-label">出版日期</label>
               <div class="uk-form-controls">
-                <input type="date" name="published" class="uk-form-width-large" v-model="current.published" id="published" placeholder="yyyy-mm-dd">
+                <input type="date" name="published" class="uk-form-width-large" v-model="current.published"
+                       id="published" placeholder="yyyy-mm-dd">
               </div>
             </div>
             <div class="uk-form-row">
@@ -51,7 +44,8 @@
             <div class="uk-form-row">
               <label for="pages" class="uk-form-label">页数</label>
               <div class="uk-form-controls">
-                <input type="number" step="any" name="pages" class="uk-form-width-large" v-model="current.pages" id="pages">
+                <input type="number" step="any" name="pages" class="uk-form-width-large" v-model="current.pages"
+                       id="pages">
               </div>
             </div>
             <div class="uk-form-row">
@@ -60,11 +54,11 @@
                 <input name="authors" class="uk-form-width-large" v-model="current.authors" id="authors">
               </div>
             </div>
-          </li>
-          <li>
+          </tab>
+          <tab label="摘要">
             <html-editor :value="current.summary" @change="current.summary = $event"></html-editor>
-          </li>
-        </ul>
+          </tab>
+        </tabs>
       </div>
     </form>
   </div>
@@ -72,6 +66,7 @@
 
 <script>
   import HtmlEditor from './htmleditor'
+  import {Tabs, Tab} from './tabs.js'
 
   export default {
     data() {
@@ -83,22 +78,22 @@
       'book'
     ],
     components: {
-      HtmlEditor
+      HtmlEditor, Tab, Tabs
     },
     computed: {
       authors: {
-        get () {
+        get() {
           return this.current.authors ? this.current.authors.join(',') : ''
         },
-        set (val) {
+        set(val) {
           this.current.authors = val.split(',')
         }
       },
       is_published: {
-        get () {
+        get() {
           return this.current.status === '上市销售'
         },
-        set (val) {
+        set(val) {
           this.current.status = val ? '上市销售' : ''
         }
       }

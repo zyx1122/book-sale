@@ -6,6 +6,7 @@
         <h2 class="uk-display-inline">{{headerText}}</h2>
       </div>
       <slot></slot>
+      <slot name="footer"></slot>
     </div>
   </div>
 </template>

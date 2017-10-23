@@ -15,8 +15,7 @@ export default {
     )
   },
   mounted() {
-    console.log(this.$ui)
-    let htmlEditor = window.UIkit.htmleditor(this.$refs.editor, {
+    let htmlEditor = this.$ui.htmlEditor(this.$refs.editor, {
       markdown: true,
       mode: 'tab'
     })

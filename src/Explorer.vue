@@ -69,13 +69,12 @@
         ref="form" v-if="current">
         </book-edit-form>
 
-        <!--<div slot="footer"-->
-        <!--class="uk-modal-footer uk-text-right">-->
-        <!--<uk-button color="primary"-->
-        <!--@click="save">保存</uk-button>-->
-        <!--<uk-button color="danger"-->
-        <!--@click="$refs.modal.close()">关闭</uk-button>-->
-        <!--</div>-->
+        <div slot="footer"
+        class="uk-modal-footer uk-text-right">
+        <button class="uk-button-primary">保存</button>
+        <button class="uk-button-danger"
+        @click="$refs.modal.close()">关闭</button>
+        </div>
       </modal>
       <!--对话框-->
     </mother-board>

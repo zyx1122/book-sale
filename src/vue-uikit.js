@@ -10,6 +10,6 @@ export default (Vue, options) => {
     confirm: ui.modal.confirm,
     prompt: ui.modal.prompt,
     block: ui.modal.blockUI,
-    htmleditor: ui.modal.htmleditor
+    htmlEditor: ui.modal.htmleditor
   }
 }
